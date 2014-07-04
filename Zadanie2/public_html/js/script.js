@@ -32,7 +32,7 @@ $(document).ready(function() {
                     $(".radio" + j).after(data.Questions[i].Answers[j].text);
                 }
             }
-
+            $('#number').html(i + '/' + n);
 
         })
 
