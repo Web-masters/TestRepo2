@@ -2,6 +2,21 @@
 $(document).ready(function() {
 
     var i = 0;
+    var n;
+    var l;
+    var Table = new Array(n);
+    Table[i] = new Array(l);
+    function insertAnswers(i) {
+        for (var x = 0; x < l; x++) {
+            if ($('input[name=checkbox' + x + ']').filter(':checked').val()) {
+                //alert($('input[name=checkbox' + x + ']').filter(':checked').val());
+                Table[i][x] = ($('input[name=checkbox' + x + ']').filter(':checked').val());
+                //alert(Table[i][x]);
+            }
+
+        }
+    }
+
 
     function Display(i) {
         $.ajax({
@@ -11,25 +26,26 @@ $(document).ready(function() {
             dataType: 'json',
             success: $.getJSON("questions.json", function(data) {
 
-                var n = data.Questions.length;
+                n = data.Questions.length;
 
 
 
                 $('#question').html(data.Questions[i].Question);
-                var l = data.Questions[i].Answers.length;
+                l = data.Questions[i].Answers.length;
+
                 $('#checkboxes').html(
                         '<div id="check" class="col-lg-10"></div>');
                 for (var j = 0; j < l; j++) {
                     $('#check').append(
                             '<div class="checkbox">' +
                             '<label>' +
-                            '<input class="radio' + j + '" type="checkbox" name="checkbox" id="optionsRadios" value="' + j + '" />' +
+                            '<input class="radio' + j + '" type="checkbox" name="checkbox' + j + '" id="optionsCheck" value="' + data.Questions[i].Answers[j].id + '" />' +
+                            data.Questions[i].Answers[j].text +
                             '</label>' +
                             '</div>');
-                    $(".radio").val(data.Questions[i].Answers[j].id);
-                    $(".radio" + j).after(data.Questions[i].Answers[j].text);
-
-
+                    if (Table[i][j]) {
+                        $('input[name=checkbox' + j + ']').attr('checked', 'checked');
+                    }
                 }
 
                 $('#number').html(data.Questions[i].id + '/' + n);
@@ -43,26 +59,27 @@ $(document).ready(function() {
                 if (i == n - 1) {
                     $('#next').addClass('hide');
                 }
-
-
-
             })
 
         });
     }
-
     Display(i);
 
     $('#next').click(function() {
+        insertAnswers(i);
         i++;
-        event.preventDefault();
+        if (!Table[i]) {
+            Table[i] = new Array(l);
+        }
         Display(i);
+        event.preventDefault();
     })
 
     $('#prev').click(function() {
+        insertAnswers(i);
         i--;
-        event.preventDefault();
         Display(i);
+        event.preventDefault();
     })
 
 
