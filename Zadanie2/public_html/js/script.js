@@ -11,19 +11,14 @@ $(document).ready(function() {
             if ($('input[name=checkbox' + x + ']').filter(':checked').val()) {
                 //alert($('input[name=checkbox' + x + ']').filter(':checked').val());
                 Table[i][x] = ($('input[name=checkbox' + x + ']').filter(':checked').val());
-                //alert(Table[i][x]);
+            } else {
+                Table[i][x] = 0;
             }
 
         }
     }
-
-
     function Display(i) {
         $.ajax({
-            url: 'questions.json',
-            cache: false,
-            data: {cmd: 'getarticlescount'},
-            dataType: 'json',
             success: $.getJSON("questions.json", function(data) {
 
                 n = data.Questions.length;
@@ -48,7 +43,7 @@ $(document).ready(function() {
                     }
                 }
 
-                $('#number').html(data.Questions[i].id + '/' + n);
+                $('#number').html((i + 1) + '/' + n);
 
                 $('#prev').removeClass('hide');
                 $('#next').removeClass('hide');
