@@ -16,3 +16,9 @@ a {
     width: 1100px;
     float: left;
 }
+#checkboxes{
+    height: 200px;
+}
+.prev_active {
+    margin-left: 85px;
+}

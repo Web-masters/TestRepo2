@@ -17,66 +17,83 @@ $(document).ready(function() {
 
         }
     }
-    function Display(i) {
-        $.ajax({
-            success: $.getJSON("questions.json", function(data) {
+    function Display(i, data) {
 
-                n = data.Questions.length;
+        n = data.Questions.length;
+        $('#question').html(data.Questions[i].Question);
+        l = data.Questions[i].Answers.length;
+        $('#checkboxes').html(
+                '<div id="checked" class="col-lg-10"></div>');
+        for (var j = 0; j < l; j++) {
+            $('#checked').append(
+                    '<div class="checkbox">' +
+                    '<label>' +
+                    '<input class="radio' + j + '" type="checkbox" name="checkbox' + j + '" id="optionsCheck" value="' + data.Questions[i].Answers[j].id + '" />' +
+                    data.Questions[i].Answers[j].text +
+                    '</label>' +
+                    '</div>');
+            if (Table[i][j]) {
+                $('input[name=checkbox' + j + ']').attr('checked', 'checked');
+            }
+        }
+
+        $('#number').html((i + 1) + '/' + n);
+
+        $('#prev').removeClass('hide');
+        $('#next').removeClass('hide');
+        $('#number').removeClass('prev_active');
+        $('#check').addClass('hide');
+
+        if (i == 0) {
+            $('#prev').addClass('hide');
+            $('#number').addClass('prev_active');
+        }
+        if (i == n - 1) {
+            $('#next').addClass('hide');
+            $('#check').removeClass('hide');
+        }
+
+    }
+    $.ajax({
+        success: $.getJSON("questions.json", function(data) {
+
+            Display(i, data);
 
 
 
-                $('#question').html(data.Questions[i].Question);
-                l = data.Questions[i].Answers.length;
-
-                $('#checkboxes').html(
-                        '<div id="check" class="col-lg-10"></div>');
-                for (var j = 0; j < l; j++) {
-                    $('#check').append(
-                            '<div class="checkbox">' +
-                            '<label>' +
-                            '<input class="radio' + j + '" type="checkbox" name="checkbox' + j + '" id="optionsCheck" value="' + data.Questions[i].Answers[j].id + '" />' +
-                            data.Questions[i].Answers[j].text +
-                            '</label>' +
-                            '</div>');
-                    if (Table[i][j]) {
-                        $('input[name=checkbox' + j + ']').attr('checked', 'checked');
-                    }
+            $('#next').click(function() {
+                $('#answers').html('');
+                insertAnswers(i);
+                i++;
+                if (!Table[i]) {
+                    Table[i] = new Array(l);
                 }
-
-                $('#number').html((i + 1) + '/' + n);
-
-                $('#prev').removeClass('hide');
-                $('#next').removeClass('hide');
-
-                if (i == 0) {
-                    $('#prev').addClass('hide');
-                }
-                if (i == n - 1) {
-                    $('#next').addClass('hide');
-                }
+                Display(i, data);
+                event.preventDefault();
             })
 
-        });
-    }
-    Display(i);
-
-    $('#next').click(function() {
-        insertAnswers(i);
-        i++;
-        if (!Table[i]) {
-            Table[i] = new Array(l);
-        }
-        Display(i);
-        event.preventDefault();
-    })
-
-    $('#prev').click(function() {
-        insertAnswers(i);
-        i--;
-        Display(i);
-        event.preventDefault();
-    })
-
+            $('#prev').click(function() {
+                $('#answers').html('');
+                insertAnswers(i);
+                i--;
+                Display(i, data);
+                event.preventDefault();
+            })
+            $('#check').click(function() {
+                $('#answers').html('');
+                insertAnswers(i);
+                for (x = 0; x < data.Questions.length; x++) {
+                    $('#answers').append('<p id=' + data.Questions[x].id + '>' + data.Questions[x].id + ' : </p>');
+                    for (y = 0; y < data.Questions[x].Answers.length; y++) {
+                        if (Table[x][y] != 0) {
+                            $('#' + data.Questions[x].id).append(Table[x][y] + ', ');
+                        }
+                    }
+                }
+                event.preventDefault();
+            })
+        })
+    });
 
 });
 
